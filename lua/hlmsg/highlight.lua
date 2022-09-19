@@ -42,7 +42,7 @@ function M._attr_id_to_hl_group(attr_id)
   return hl_group
 end
 
-function M.to_chunks(entries)
+function M.chunks(entries)
   local chunks = {}
   for _, entry in ipairs(entries) do
     local chunk = {}
@@ -59,7 +59,7 @@ end
 
 local nvim_buf_set_extmark = vim.api.nvim_buf_set_extmark
 function M.add(ns, bufnr, entries)
-  local chunks = M.to_chunks(entries)
+  local chunks = M.chunks(entries)
   for i, chunk in ipairs(chunks) do
     local start_col = 0
     for _, pair in ipairs(chunk) do

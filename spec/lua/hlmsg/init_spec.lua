@@ -24,3 +24,25 @@ describe("hlmsg.render()", function()
     assert.is_same(got, { "" })
   end)
 end)
+
+describe("hlmsg.get()", function()
+  before_each(helper.before_each)
+  after_each(helper.after_each)
+
+  it("returns highlight text chunks", function()
+    print("line1")
+    vim.api.nvim_echo({ { "li" }, { "ne2" } }, true, {})
+
+    local got = hlmsg.get()
+
+    assert.is_same(got, {
+      {
+        { "line1", "HlmsgAttribute0" },
+      },
+      {
+        { "li", "HlmsgAttribute0" },
+        { "ne2", "HlmsgAttribute0" },
+      },
+    })
+  end)
+end)
