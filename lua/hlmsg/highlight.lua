@@ -22,8 +22,10 @@ if not ok and not err:find("redefine") then
   error(err)
 end
 
+local C = ffi.C
+local nvim_set_hl = vim.api.nvim_set_hl
 function M._attr_id_to_hl_group(attr_id)
-  local attributes = ffi.C.syn_attr2entry(attr_id)
+  local attributes = C.syn_attr2entry(attr_id)
   local hl_group = "HlmsgAttribute" .. tostring(attr_id)
 
   local blend = attributes.hl_blend
@@ -31,7 +33,7 @@ function M._attr_id_to_hl_group(attr_id)
     blend = nil
   end
 
-  vim.api.nvim_set_hl(0, hl_group, {
+  nvim_set_hl(0, hl_group, {
     fg = attributes.rgb_fg_color,
     bg = attributes.rgb_bg_color,
     bold = bit.band(attributes.rgb_ae_attr, 0x02),
@@ -40,15 +42,30 @@ function M._attr_id_to_hl_group(attr_id)
   return hl_group
 end
 
-function M.add(ns, bufnr, entries)
-  for i, entry in ipairs(entries) do
+function M.to_chunks(entries)
+  local chunks = {}
+  for _, entry in ipairs(entries) do
+    local chunk = {}
     local _, contents = unpack(entry)
-    local start_col = 0
     for _, pair in ipairs(contents) do
       local attr_id, text = unpack(pair)
       local hl_group = M._attr_id_to_hl_group(attr_id)
+      table.insert(chunk, { text, hl_group })
+    end
+    table.insert(chunks, chunk)
+  end
+  return chunks
+end
+
+local nvim_buf_set_extmark = vim.api.nvim_buf_set_extmark
+function M.add(ns, bufnr, entries)
+  local chunks = M.to_chunks(entries)
+  for i, chunk in ipairs(chunks) do
+    local start_col = 0
+    for _, pair in ipairs(chunk) do
+      local text, hl_group = unpack(pair)
       local end_col = start_col + vim.fn.strdisplaywidth(text)
-      vim.api.nvim_buf_set_extmark(bufnr, ns, i - 1, start_col, {
+      nvim_buf_set_extmark(bufnr, ns, i - 1, start_col, {
         hl_group = hl_group,
         end_col = end_col,
       })
