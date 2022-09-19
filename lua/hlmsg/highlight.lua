@@ -50,7 +50,13 @@ function M.chunks(entries)
     for _, pair in ipairs(contents) do
       local attr_id, text = unpack(pair)
       local hl_group = M._attr_id_to_hl_group(attr_id)
-      table.insert(chunk, { text, hl_group })
+
+      local lines = vim.split(text, "\n", true)
+      table.insert(chunk, { lines[1], hl_group })
+      for _, line in ipairs(vim.list_slice(lines, 2)) do
+        table.insert(chunks, chunk)
+        chunk = { { line, hl_group } }
+      end
     end
     table.insert(chunks, chunk)
   end
@@ -58,13 +64,12 @@ function M.chunks(entries)
 end
 
 local nvim_buf_set_extmark = vim.api.nvim_buf_set_extmark
-function M.add(ns, bufnr, entries)
-  local chunks = M.chunks(entries)
+function M.add(ns, bufnr, chunks)
   for i, chunk in ipairs(chunks) do
     local start_col = 0
     for _, pair in ipairs(chunk) do
       local text, hl_group = unpack(pair)
-      local end_col = start_col + vim.fn.strdisplaywidth(text)
+      local end_col = start_col + #text
       nvim_buf_set_extmark(bufnr, ns, i - 1, start_col, {
         hl_group = hl_group,
         end_col = end_col,

@@ -34,14 +34,13 @@ function M.get(ns)
   return entries
 end
 
-function M.to_lines(entries)
+function M.to_lines(chunks)
   local lines = {}
-  for _, entry in ipairs(entries) do
-    local _, contents = unpack(entry)
+  for _, chunk in ipairs(chunks) do
     local line = {}
-    for _, content in ipairs(contents) do
-      local _, message = unpack(content)
-      table.insert(line, message)
+    for _, pair in ipairs(chunk) do
+      local text = unpack(pair)
+      table.insert(line, text)
     end
     table.insert(lines, table.concat(line, ""))
   end

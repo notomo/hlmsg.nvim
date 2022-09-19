@@ -31,7 +31,7 @@ describe("hlmsg.get()", function()
 
   it("returns highlight text chunks", function()
     print("line1")
-    vim.api.nvim_echo({ { "li" }, { "ne2" } }, true, {})
+    vim.api.nvim_echo({ { "li" }, { "n\ne" }, { "2" } }, true, {})
 
     local got = hlmsg.get()
 
@@ -41,7 +41,11 @@ describe("hlmsg.get()", function()
       },
       {
         { "li", "HlmsgAttribute0" },
-        { "ne2", "HlmsgAttribute0" },
+        { "n", "HlmsgAttribute0" },
+      },
+      {
+        { "e", "HlmsgAttribute0" },
+        { "2", "HlmsgAttribute0" },
       },
     })
   end)
