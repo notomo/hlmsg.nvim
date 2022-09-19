@@ -1,15 +1,15 @@
 local M = {}
 
-function M.get(ns, callback)
+function M.get(ns)
   vim.ui_detach(ns)
 
   local has_messages = vim.api.nvim_exec("messages", true) ~= ""
   if not has_messages then
-    callback({})
-    return nil
+    return {}
   end
 
   local cmdheight = vim.o.cmdheight
+  local entries = {}
   vim.ui_attach(ns, { ext_messages = true }, function(event, ...)
     if event ~= "msg_history_show" then
       return
@@ -23,14 +23,15 @@ function M.get(ns, callback)
     -- currently, cmdheight is changed by ui_attach
     vim.o.cmdheight = cmdheight
 
-    local entries = ...
-    callback(entries)
+    entries = ...
   end)
 
   vim.cmd.messages()
 
   -- to hide press ENTER message
   vim.api.nvim_echo({ { "" } }, false, {})
+
+  return entries
 end
 
 function M.to_lines(entries)
