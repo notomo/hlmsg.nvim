@@ -101,9 +101,9 @@ function M.messages(entries)
 end
 
 local nvim_buf_set_extmark = vim.api.nvim_buf_set_extmark
-function M.add(ns, bufnr, hl_lines)
-  for i, hl_line in ipairs(hl_lines) do
-    for _, chunk in ipairs(hl_line.chunks) do
+function M.add(ns, bufnr, messages)
+  for i, message in ipairs(messages) do
+    for _, chunk in ipairs(message.chunks) do
       nvim_buf_set_extmark(bufnr, ns, i - 1, chunk.start_col, {
         hl_group = chunk.hl_group,
         end_col = chunk.end_col,
