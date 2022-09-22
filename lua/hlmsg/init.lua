@@ -7,7 +7,7 @@ function M.render(bufnr)
 end
 
 --- Render highlighted text chunks.
---- @return table: [text, hl_group][][]
+--- @return table: { kind = string, line = string, chunks = { text = string, hl_group = string, start_col = number, end_col = number }[] }
 function M.get()
   return require("hlmsg.command").get()
 end

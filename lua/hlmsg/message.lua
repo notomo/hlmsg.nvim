@@ -34,17 +34,4 @@ function M.get(ns)
   return entries
 end
 
-function M.to_lines(chunks)
-  local lines = {}
-  for _, chunk in ipairs(chunks) do
-    local line = {}
-    for _, pair in ipairs(chunk) do
-      local text = unpack(pair)
-      table.insert(line, text)
-    end
-    table.insert(lines, table.concat(line, ""))
-  end
-  return lines
-end
-
 return M

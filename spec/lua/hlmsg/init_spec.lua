@@ -30,22 +30,59 @@ describe("hlmsg.get()", function()
   after_each(helper.after_each)
 
   it("returns highlight text chunks", function()
-    print("line1")
+    vim.api.nvim_echo({ { "line1" } }, true, {})
     vim.api.nvim_echo({ { "li" }, { "n\ne" }, { "2" } }, true, {})
 
     local got = hlmsg.get()
 
     assert.is_same(got, {
       {
-        { "line1", "HlmsgAttribute0" },
+        line = "line1",
+        kind = "echomsg",
+        chunks = {
+          {
+            text = "line1",
+            hl_group = "HlmsgAttribute0",
+            start_col = 0,
+            end_col = 5,
+          },
+        },
       },
       {
-        { "li", "HlmsgAttribute0" },
-        { "n", "HlmsgAttribute0" },
+        line = "lin",
+        kind = "echomsg",
+        chunks = {
+          {
+            text = "li",
+            hl_group = "HlmsgAttribute0",
+            start_col = 0,
+            end_col = 2,
+          },
+          {
+            text = "n",
+            hl_group = "HlmsgAttribute0",
+            start_col = 2,
+            end_col = 3,
+          },
+        },
       },
       {
-        { "e", "HlmsgAttribute0" },
-        { "2", "HlmsgAttribute0" },
+        line = "e2",
+        kind = "echomsg",
+        chunks = {
+          {
+            text = "e",
+            hl_group = "HlmsgAttribute0",
+            start_col = 0,
+            end_col = 1,
+          },
+          {
+            text = "2",
+            hl_group = "HlmsgAttribute0",
+            start_col = 1,
+            end_col = 2,
+          },
+        },
       },
     })
   end)

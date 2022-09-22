@@ -42,39 +42,72 @@ function M._attr_id_to_hl_group(attr_id)
   return hl_group
 end
 
-function M.chunks(entries)
-  local chunks = {}
-  for _, entry in ipairs(entries) do
-    local chunk = {}
-    local _, contents = unpack(entry)
-    for _, pair in ipairs(contents) do
-      local attr_id, text = unpack(pair)
-      local hl_group = M._attr_id_to_hl_group(attr_id)
+local new_state = function()
+  return {
+    start_col = 0,
+    texts = {},
+    chunks = {},
+  }
+end
 
-      local lines = vim.split(text, "\n", true)
-      table.insert(chunk, { lines[1], hl_group })
+local new_message = function(kind, state)
+  return {
+    kind = kind,
+    line = table.concat(state.texts, ""),
+    chunks = state.chunks,
+  }
+end
+
+local add_chunk = function(text, hl_group, state)
+  local texts = {}
+  vim.list_extend(texts, state.texts)
+  table.insert(texts, text)
+
+  local chunks = {}
+  vim.list_extend(chunks, state.chunks)
+  local end_col = state.start_col + #text
+  table.insert(chunks, {
+    text = text,
+    hl_group = hl_group,
+    start_col = state.start_col,
+    end_col = end_col,
+  })
+
+  return {
+    start_col = end_col,
+    texts = texts,
+    chunks = chunks,
+  }
+end
+
+function M.messages(entries)
+  local messages = {}
+  for _, entry in ipairs(entries) do
+    local state = new_state()
+    local kind, contents = unpack(entry)
+    for _, pair in ipairs(contents) do
+      local attr_id, text_chunk = unpack(pair)
+      local hl_group = M._attr_id_to_hl_group(attr_id)
+      local lines = vim.split(text_chunk, "\n", true)
+      state = add_chunk(lines[1], hl_group, state)
       for _, line in ipairs(vim.list_slice(lines, 2)) do
-        table.insert(chunks, chunk)
-        chunk = { { line, hl_group } }
+        table.insert(messages, new_message(kind, state))
+        state = add_chunk(line, hl_group, new_state())
       end
     end
-    table.insert(chunks, chunk)
+    table.insert(messages, new_message(kind, state))
   end
-  return chunks
+  return messages
 end
 
 local nvim_buf_set_extmark = vim.api.nvim_buf_set_extmark
-function M.add(ns, bufnr, chunks)
-  for i, chunk in ipairs(chunks) do
-    local start_col = 0
-    for _, pair in ipairs(chunk) do
-      local text, hl_group = unpack(pair)
-      local end_col = start_col + #text
-      nvim_buf_set_extmark(bufnr, ns, i - 1, start_col, {
-        hl_group = hl_group,
-        end_col = end_col,
+function M.add(ns, bufnr, hl_lines)
+  for i, hl_line in ipairs(hl_lines) do
+    for _, chunk in ipairs(hl_line.chunks) do
+      nvim_buf_set_extmark(bufnr, ns, i - 1, chunk.start_col, {
+        hl_group = chunk.hl_group,
+        end_col = chunk.end_col,
       })
-      start_col = end_col
     end
   end
 end
