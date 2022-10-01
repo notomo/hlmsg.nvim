@@ -36,7 +36,18 @@ function M._attr_id_to_hl_group(attr_id)
   nvim_set_hl(0, hl_group, {
     fg = attributes.rgb_fg_color,
     bg = attributes.rgb_bg_color,
+    sp = attributes.rgb_sp_color,
+    reverse = bit.band(attributes.rgb_ae_attr, 0x01),
     bold = bit.band(attributes.rgb_ae_attr, 0x02),
+    italic = bit.band(attributes.rgb_ae_attr, 0x04),
+    underline = bit.band(attributes.rgb_ae_attr, 0x08),
+    undercurl = bit.band(attributes.rgb_ae_attr, 0x10),
+    underdouble = bit.band(attributes.rgb_ae_attr, 0x20),
+    underdotted = bit.band(attributes.rgb_ae_attr, 0x40),
+    underdashed = bit.band(attributes.rgb_ae_attr, 0x80),
+    standout = bit.band(attributes.rgb_ae_attr, 0x0100),
+    nocombine = bit.band(attributes.rgb_ae_attr, 0x0200),
+    strikethrough = bit.band(attributes.rgb_ae_attr, 0x0400),
     blend = blend,
   })
   return hl_group
