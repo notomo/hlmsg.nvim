@@ -1,9 +1,8 @@
-local ShowError = require("hlmsg.vendor.misclib.error_handler").for_show_error()
-local ReturnValue = require("hlmsg.vendor.misclib.error_handler").for_return_value()
+local M = {}
 
 local ns = vim.api.nvim_create_namespace("hlmsg")
 
-function ShowError.render(bufnr)
+function M.render(bufnr)
   local entries = require("hlmsg.message").get(ns)
   local messages = require("hlmsg.highlight").messages(entries)
 
@@ -15,9 +14,9 @@ function ShowError.render(bufnr)
   require("hlmsg.highlight").add(ns, bufnr, messages)
 end
 
-function ReturnValue.get()
+function M.get()
   local entries = require("hlmsg.message").get(ns)
   return require("hlmsg.highlight").messages(entries)
 end
 
-return vim.tbl_extend("force", ShowError:methods(), ReturnValue:methods())
+return M
