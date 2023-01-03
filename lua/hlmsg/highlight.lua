@@ -99,7 +99,7 @@ function M.messages(entries)
     for _, pair in ipairs(contents) do
       local attr_id, text_chunk = unpack(pair)
       local hl_group = M._attr_id_to_hl_group(attr_id)
-      local lines = vim.split(text_chunk, "\n", true)
+      local lines = vim.split(text_chunk, "\n", { plain = true })
       state = add_chunk(lines[1], hl_group, state)
       for _, line in ipairs(vim.list_slice(lines, 2)) do
         table.insert(messages, new_message(kind, state))
