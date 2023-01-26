@@ -1,0 +1,37 @@
+*hlmsg.nvim.txt*
+
+==============================================================================
+Lua module: hlmsg                                           *hlmsg.nvim-hlmsg*
+
+render({bufnr})                                               *hlmsg.render()*
+  Renders highlighted message history to the given buffer.
+
+  Parameters: ~
+    {bufnr} (number) modifiable buffer number
+
+get()                                                            *hlmsg.get()*
+  Returns highlighted text chunks.
+
+  Return: ~
+    (table) {
+        kind = string,
+        line = string,
+        chunks = {
+          text = string,
+          hl_group = string,
+          start_col = number,
+          end_col = number
+        }[]
+      }[]
+
+==============================================================================
+EXAMPLES                                                 *hlmsg.nvim-EXAMPLES*
+
+>lua
+  vim.cmd.tabedit()
+  vim.bo.buftype = "nofile"
+  require("hlmsg").render(0)
+<
+
+==============================================================================
+vim:tw=78:ts=8:ft=help
