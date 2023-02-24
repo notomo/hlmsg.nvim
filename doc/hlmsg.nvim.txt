@@ -13,16 +13,23 @@ get()                                                            *hlmsg.get()*
   Returns highlighted text chunks.
 
   Return: ~
-    (table) {
-        kind = string,
-        line = string,
-        chunks = {
-          text = string,
-          hl_group = string,
-          start_col = number,
-          end_col = number
-        }[]
-      }[]
+    (HlmsgMessage[]) |HlmsgMessage|
+
+==============================================================================
+STRUCTURE                                               *hlmsg.nvim-STRUCTURE*
+
+HlmsgMessage                                                    *HlmsgMessage*
+
+- {kind} (string) |ui-messages|'s kind
+- {line} (string) message splitted by newline
+- {chunks} (HlmsgChunk[]) |HlmsgChunk|
+
+HlmsgChunk                                                        *HlmsgChunk*
+
+- {text} (string) chunked text
+- {hl_group} (string) highlight group
+- {start_col} (integer) 0-based index column
+- {end_col} (integer) 0-based index column
 
 ==============================================================================
 EXAMPLES                                                 *hlmsg.nvim-EXAMPLES*
