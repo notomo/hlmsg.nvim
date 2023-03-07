@@ -18,7 +18,7 @@ end
 --- @field end_col integer 0-based index column
 
 --- Returns highlighted text chunks.
---- @return HlmsgMessage[]: |HlmsgMessage|
+--- @return HlmsgMessage[] # |HlmsgMessage|
 function M.get()
   return require("hlmsg.command").get()
 end
