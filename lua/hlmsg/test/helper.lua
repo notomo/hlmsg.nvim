@@ -7,7 +7,7 @@ function helper.after_each()
   local log_file_path = os.getenv("HLMSG_TEST_LOG")
   if log_file_path then
     local f = io.open(log_file_path, "a")
-    local log = vim.api.nvim_exec("messages", true)
+    local log = vim.api.nvim_exec2("messages", { output = true }).output
     f:write(log .. "\n")
   end
   helper.cleanup()

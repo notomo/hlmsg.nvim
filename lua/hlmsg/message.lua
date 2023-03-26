@@ -3,7 +3,7 @@ local M = {}
 function M.get(ns)
   vim.ui_detach(ns)
 
-  local has_messages = vim.api.nvim_exec("messages", true) ~= ""
+  local has_messages = vim.api.nvim_exec2("messages", { output = true }).output ~= ""
   if not has_messages then
     return {}
   end
