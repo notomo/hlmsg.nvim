@@ -16,7 +16,7 @@ function M.get(ns)
     end
 
     -- to close press ENTER prompt
-    local press_enter = vim.api.nvim_replace_termcodes("<Cmd><CR>", true, false, true)
+    local press_enter = vim.keycode("<Cmd><CR>")
     vim.api.nvim_feedkeys(press_enter, "nt", true)
 
     vim.ui_detach(ns)
