@@ -22,6 +22,14 @@ if not ok and not err:find("redefine") then
   error(err)
 end
 
+local bit_and = function(attribute, flag)
+  local value = bit.band(attribute, flag)
+  if value == 0 then
+    return nil
+  end
+  return value
+end
+
 local C = ffi.C
 local nvim_set_hl = vim.api.nvim_set_hl
 function M._attr_id_to_hl_group(attr_id)
@@ -37,17 +45,17 @@ function M._attr_id_to_hl_group(attr_id)
     fg = attributes.rgb_fg_color,
     bg = attributes.rgb_bg_color,
     sp = attributes.rgb_sp_color,
-    reverse = bit.band(attributes.rgb_ae_attr, 0x01),
-    bold = bit.band(attributes.rgb_ae_attr, 0x02),
-    italic = bit.band(attributes.rgb_ae_attr, 0x04),
-    underline = bit.band(attributes.rgb_ae_attr, 0x08),
-    undercurl = bit.band(attributes.rgb_ae_attr, 0x10),
-    underdouble = bit.band(attributes.rgb_ae_attr, 0x20),
-    underdotted = bit.band(attributes.rgb_ae_attr, 0x40),
-    underdashed = bit.band(attributes.rgb_ae_attr, 0x80),
-    standout = bit.band(attributes.rgb_ae_attr, 0x0100),
-    nocombine = bit.band(attributes.rgb_ae_attr, 0x0200),
-    strikethrough = bit.band(attributes.rgb_ae_attr, 0x0400),
+    reverse = bit_and(attributes.rgb_ae_attr, 0x01),
+    bold = bit_and(attributes.rgb_ae_attr, 0x02),
+    italic = bit_and(attributes.rgb_ae_attr, 0x04),
+    underline = bit_and(attributes.rgb_ae_attr, 0x08),
+    undercurl = bit_and(attributes.rgb_ae_attr, 0x10),
+    underdouble = bit_and(attributes.rgb_ae_attr, 0x18),
+    underdotted = bit_and(attributes.rgb_ae_attr, 0x20),
+    underdashed = bit_and(attributes.rgb_ae_attr, 0x28),
+    standout = bit_and(attributes.rgb_ae_attr, 0x0040),
+    nocombine = bit_and(attributes.rgb_ae_attr, 0x0400),
+    strikethrough = bit_and(attributes.rgb_ae_attr, 0x0080),
     blend = blend,
   })
   return hl_group
