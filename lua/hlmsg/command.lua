@@ -6,9 +6,12 @@ function M.render(bufnr)
   local entries = require("hlmsg.message").get(ns)
   local messages = require("hlmsg.highlight").messages(entries)
 
-  local lines = vim.tbl_map(function(message)
-    return message.line
-  end, messages)
+  local lines = vim
+    .iter(messages)
+    :map(function(message)
+      return message.line
+    end)
+    :totable()
   vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
 
   require("hlmsg.highlight").add(ns, bufnr, messages)
