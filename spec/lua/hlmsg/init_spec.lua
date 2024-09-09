@@ -1,5 +1,6 @@
 local helper = require("hlmsg.test.helper")
 local hlmsg = helper.require("hlmsg")
+local assert = require("assertlib").typed(assert)
 
 describe("hlmsg.render()", function()
   before_each(helper.before_each)
@@ -13,7 +14,7 @@ describe("hlmsg.render()", function()
     hlmsg.render(bufnr)
 
     local got = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-    assert.is_same(got, { "line1", "line2" })
+    assert.same(got, { "line1", "line2" })
   end)
 
   it("works when there is no message", function()
@@ -21,7 +22,7 @@ describe("hlmsg.render()", function()
     hlmsg.render(bufnr)
 
     local got = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-    assert.is_same(got, { "" })
+    assert.same(got, { "" })
   end)
 end)
 
@@ -35,7 +36,7 @@ describe("hlmsg.get()", function()
 
     local got = hlmsg.get()
 
-    assert.is_same(got, {
+    assert.same(got, {
       {
         line = "line1",
         kind = "echomsg",
