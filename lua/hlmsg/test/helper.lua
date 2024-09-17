@@ -11,6 +11,7 @@ function helper.after_each()
   local log_file_path = os.getenv("HLMSG_TEST_LOG")
   if log_file_path then
     local f = io.open(log_file_path, "a")
+    assert(f, "cannot open file: " .. log_file_path)
     local log = vim.api.nvim_exec2("messages", { output = true }).output
     f:write(log .. "\n")
   end

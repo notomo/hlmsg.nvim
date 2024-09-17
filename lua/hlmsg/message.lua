@@ -10,6 +10,7 @@ function M.get(ns)
 
   local cmdheight = vim.o.cmdheight
   local entries = {}
+  ---@diagnostic disable-next-line: redundant-parameter
   vim.ui_attach(ns, { ext_messages = true }, function(event, ...)
     if event ~= "msg_history_show" then
       return

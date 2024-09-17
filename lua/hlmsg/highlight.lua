@@ -18,7 +18,7 @@ HlAttrs syn_attr2entry(int attr);
 ]])
 end
 local ok, err = pcall(setup_ffi)
-if not ok and not err:find("redefine") then
+if not ok and err and not err:find("redefine") then
   error(err)
 end
 
@@ -27,7 +27,7 @@ local bit_and = function(attribute, flag)
   if value == 0 then
     return nil
   end
-  return value
+  return true
 end
 
 local C = ffi.C
