@@ -1,62 +1,33 @@
 local M = {}
 
--- HACK
-
-local ffi = require("ffi")
-local setup_ffi = function()
-  -- The following cdef code is from https://github.com/neovim/neovim/blob/c126c1f73a0bae3ac40ce460ef303348a671a08f/src/nvim/highlight_defs.h .
-  -- Its license is https://www.apache.org/licenses/LICENSE-2.0 .
-  ffi.cdef([[
-typedef int32_t RgbValue;
-typedef struct attr_entry {
-  int16_t rgb_ae_attr, cterm_ae_attr;
-  RgbValue rgb_fg_color, rgb_bg_color, rgb_sp_color;
-  int cterm_fg_color, cterm_bg_color;
-  int hl_blend;
-} HlAttrs;
-HlAttrs syn_attr2entry(int attr);
-]])
-end
-local ok, err = pcall(setup_ffi)
-if not ok and err and not err:find("redefine") then
-  error(err)
-end
-
-local bit_and = function(attribute, flag)
-  local value = bit.band(attribute, flag)
-  if value == 0 then
-    return nil
-  end
-  return true
-end
-
-local C = ffi.C
 local nvim_set_hl = vim.api.nvim_set_hl
-function M._attr_id_to_hl_group(attr_id)
-  local attributes = C.syn_attr2entry(attr_id)
-  local hl_group = "HlmsgAttribute" .. tostring(attr_id)
-
-  local blend = attributes.hl_blend
-  if blend == -1 then
-    blend = nil
+function M._attr_id_to_hl_group(hl_id)
+  if hl_id == 0 then
+    return "NONE"
   end
 
+  local hl = vim.api.nvim_get_hl(0, { id = hl_id, link = true, create = false })
+  if hl.link then
+    return hl.link
+  end
+
+  local hl_group = "Hlmsg" .. tostring(hl_id)
   nvim_set_hl(0, hl_group, {
-    fg = attributes.rgb_fg_color,
-    bg = attributes.rgb_bg_color,
-    sp = attributes.rgb_sp_color,
-    reverse = bit_and(attributes.rgb_ae_attr, 0x01),
-    bold = bit_and(attributes.rgb_ae_attr, 0x02),
-    italic = bit_and(attributes.rgb_ae_attr, 0x04),
-    underline = bit_and(attributes.rgb_ae_attr, 0x08),
-    undercurl = bit_and(attributes.rgb_ae_attr, 0x10),
-    underdouble = bit_and(attributes.rgb_ae_attr, 0x18),
-    underdotted = bit_and(attributes.rgb_ae_attr, 0x20),
-    underdashed = bit_and(attributes.rgb_ae_attr, 0x28),
-    standout = bit_and(attributes.rgb_ae_attr, 0x0040),
-    nocombine = bit_and(attributes.rgb_ae_attr, 0x0400),
-    strikethrough = bit_and(attributes.rgb_ae_attr, 0x0080),
-    blend = blend,
+    fg = hl.fg,
+    bg = hl.bg,
+    sp = hl.sp,
+    reverse = hl.reverse,
+    bold = hl.bold,
+    italic = hl.italic,
+    underline = hl.underline,
+    undercurl = hl.undercurl,
+    underdouble = hl.underdouble,
+    underdotted = hl.underdotted,
+    underdashed = hl.underdashed,
+    standout = hl.standout,
+    nocombine = hl.nocombine,
+    strikethrough = hl.reverse,
+    blend = hl.blend,
   })
   return hl_group
 end
@@ -105,8 +76,8 @@ function M.messages(entries)
     local state = new_state()
     local kind, contents = unpack(entry)
     for _, pair in ipairs(contents) do
-      local attr_id, text_chunk = unpack(pair)
-      local hl_group = M._attr_id_to_hl_group(attr_id)
+      local _, text_chunk, hl_id = unpack(pair)
+      local hl_group = M._attr_id_to_hl_group(hl_id)
       local lines = vim.split(text_chunk, "\n", { plain = true })
       state = add_chunk(lines[1], hl_group, state)
       for _, line in ipairs(vim.list_slice(lines, 2)) do
