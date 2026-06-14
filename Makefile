@@ -1,7 +1,7 @@
 include spec/.shared/neovim-plugin.mk
 
 spec/.shared/neovim-plugin.mk:
-	git clone https://github.com/notomo/workflow.git --depth 1 --branch ntf spec/.shared
+	git clone https://github.com/notomo/workflow.git --depth 1 spec/.shared
 
 HLMSG_TEST_LOG:=${SPEC_DIR}/test.log
 test: FORCE deps
