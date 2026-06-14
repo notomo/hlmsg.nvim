@@ -1,14 +1,16 @@
+local ntf = require("ntf")
+local describe, it, before_each, after_each = ntf.describe, ntf.it, ntf.before_each, ntf.after_each
 local helper = require("hlmsg.test.helper")
-local hlmsg = helper.require("hlmsg")
-local assert = require("assertlib").typed(assert)
+local hlmsg = require("hlmsg")
+local assert = require("assertlib").typed(ntf.assert)
 
 describe("hlmsg.render()", function()
   before_each(helper.before_each)
   after_each(helper.after_each)
 
   it("renders message histories as lines", function()
-    print("line1")
-    print("line2")
+    vim.api.nvim_echo({ { "line1" } }, true, {})
+    vim.api.nvim_echo({ { "line2" } }, true, {})
 
     local bufnr = vim.api.nvim_create_buf(false, true)
     hlmsg.render(bufnr)
