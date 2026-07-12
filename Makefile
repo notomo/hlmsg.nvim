@@ -6,4 +6,4 @@ spec/.shared/neovim-plugin.mk:
 HLMSG_TEST_LOG:=${SPEC_DIR}/test.log
 test: FORCE deps
 	rm -f ${HLMSG_TEST_LOG}
-	HLMSG_TEST_LOG=${HLMSG_TEST_LOG} ${NTF} --shuffle ${SPEC_DIR}
+	HLMSG_TEST_LOG=${HLMSG_TEST_LOG} ${NTF} ${SPEC_DIR}
